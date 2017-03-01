@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>task4</title>
+	<style>
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		button.btn{
+			width: 60px;
+			height: 30px;
+			text-align: center;
+			line-height: 15px;
+ 		}
+ 		ul#render{
+ 			margin-top: 20px;
+ 			margin-left: 20px;
+ 		}
+ 		ul#render .queuebox{
+ 			list-style: none;
+ 			float: left;
+ 			display: inline-block;
+ 			width: 50px;
+ 			height: 50px;
+ 			background-color: #e2d3c5;
+ 			margin-right: 10px;
+ 			text-align: center;
+ 			line-height: 50px;
+ 		}
+	</style>
+</head>
+<body>
+	<input type="text" id="dataInput">
+	<button class="btn l_in" id="l_in">左侧出</button>
+	<button class="btn r_in" id="r_in">右侧入</button>
+	<button class="btn l_out" id="l_out">左侧入</button>
+	<button class="btn r_out" id="r_out">右侧出</button>
+	
+	<ul id="render">
+		
+	</ul>
+
+
+</body>
+<script>
+	(function() {
+
+	var arr = [3,0,23,32,2];
+
+	var render = function() {
+		var ul = document.getElementById('render');
+		ul.innerHTML = '';
+		arr.forEach(function (item,index,array) {
+				createItem(item);
+		})
+	};
+
+	var createItem = function(value) {
+		var li = document.createElement('li');
+		li.innerText = value;
+		li.className += "queuebox";
+		var ul = document.getElementById('render');
+		ul.appendChild(li);
+	};
+
+	//策略模式
+	var strategies = {
+		"shift":function  (value) {
+				arr.shift(value);
+				render();
+		},
+		"push":function  (value) {
+				arr.push(value);
+				render();
+		},
+		"unshift":function  (value) {
+				arr.unshift(value);
+				render();
+		},
+		"pop":function  (value) {
+				arr.pop(value);
+				render();
+		}
+	};
+
+	var handleItem = function  (model) {
+		var value = document.getElementById('dataInput').value;
+		console.log(typeof value);
+		if (value === "") {
+			return;
+		} else {
+			strategies[model](value);
+		}
+		
+	}
+
+
+	document.getElementById('l_in').addEventListener('click', function (e) {
+		handleItem("shift");
+	}, false);
+	document.getElementById('r_in').addEventListener('click', function (e) {
+		handleItem("push");
+	}, false);
+	document.getElementById('l_out').addEventListener('click', function (e) {
+		handleItem("unshift");
+	}, false);
+	document.getElementById('r_out').addEventListener('click', function (e) {
+		handleItem("pop");
+	}, false);
+	
+	render();
+
+	})()
+	
+
+</script>
+</html>
