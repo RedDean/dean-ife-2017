@@ -1,0 +1,111 @@
+<!DOCTYPE>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>IFE JavaScript Task 01</title>
+  </head>
+<body>
+
+  <ul id="source">
+    <li>北京空气质量：<b>90</b></li>
+    <li>上海空气质量：<b>70</b></li>
+    <li>天津空气质量：<b>80</b></li>
+    <li>广州空气质量：<b>50</b></li>
+    <li>深圳空气质量：<b>40</b></li>
+    <li>福州空气质量：<b>32</b></li>
+    <li>成都空气质量：<b>90</b></li>
+  </ul>
+
+  <ul id="resort">
+    <!-- 
+    <li>第一名：北京空气质量：<b>90</b></li>
+    <li>第二名：北京空气质量：<b>90</b></li>
+    <li>第三名：北京空气质量：<b>90</b></li>
+     -->
+
+  </ul>
+
+  <button id="sortbtn">排序</button>
+
+<script type="text/javascript">
+
+/**
+ * getData方法
+ * 读取id为source的列表，获取其中城市名字及城市对应的空气质量
+ * 返回一个数组，格式见函数中示例
+ */
+
+function getData() {
+  /*
+  coding here
+  */
+    var data = [];
+    var ul = document.getElementById('source');
+    var items = ul.getElementsByTagName('li');
+    
+    //items是一个HTML collections 所以不能直接使用forEach方法，对于类数组对象
+    //应该用call
+    [].forEach.call(items, function(item,index,array) {
+         
+         data.push([item.innerText.slice(0,2),Number(item.innerText.slice(7,9))]);
+
+    });
+   
+  /*
+  data = [
+    ["北京", 90],
+    ["北京", 90]
+    ……
+  ]
+  */
+
+  return data;
+
+}
+
+/**
+ * sortAqiData
+ * 按空气质量对data进行从小到大的排序
+ * 返回一个排序后的数组
+ */
+function sortAqiData(data) {
+    var sortData = data.sort(function(x,y){
+        return y[1] - x[1];
+    });
+
+    return sortData;
+}
+
+/**
+ * render
+ * 将排好序的城市及空气质量指数，输出显示到id位resort的列表中
+ * 格式见ul中的注释的部分
+ */
+function render(data) {
+    data.forEach(function(item,index){
+      var li = document.createElement('li');
+      li.innerHTML = `第 ${index + 1} 名: ${item[0]},${item[1]}`;
+      document.getElementById('resort').appendChild(li);
+  });
+}
+
+function btnHandle() {
+  var aqiData = getData();
+  aqiData = sortAqiData(aqiData);
+  render(aqiData);
+}
+
+function init() {
+
+  // 在这下面给sort-btn绑定一个点击事件，点击时触发btnHandle函数
+  var sort_btn  = document.getElementById('sortbtn');
+  sort_btn.addEventListener('click', function (e) {
+      btnHandle();
+  }, false);
+}
+
+init();
+
+</script>
+</body>
+</html>
