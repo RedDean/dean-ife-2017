@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>task5</title>
+	<style>
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		button.btn{
+			width: 60px;
+			height: 30px;
+			text-align: center;
+			line-height: 15px;
+ 		}
+ 		ul#render{
+ 			position: relative;
+ 			margin-top: 300px;
+ 			margin-left: 20px;
+ 		}
+ 		ul#render .queuebox{
+ 			position: absolute;
+ 			list-style: none;
+ 			display: inline-block;
+ 			width: 50px;
+ 			
+ 			background-color: #e2d3c5;
+ 			margin-right: 10px;
+ 			text-align: center;
+ 			
+ 		}
+	</style>
+</head>
+<body>
+	<input type="text"  id="dataInput">
+	<button class="btn l_in" id="l_in">左侧出</button>
+	<button class="btn r_in" id="r_in">右侧入</button>
+	<button class="btn l_out" id="l_out">左侧入</button>
+	<button class="btn r_out" id="r_out">右侧出</button>
+	<button class="btn" id="sort">升序</button>
+
+	<ul id="render">
+		
+	</ul>
+
+
+</body>
+<script>
+	(function() {
+
+	var arr = [11,22,33,44,55];
+
+	//渲染数组
+	var render = function() {
+		var ul = document.getElementById('render');
+		ul.innerHTML = '';
+
+		if (arr.length>60) {
+			alert("超出限制！")
+		} else {
+			arr.forEach(function (item,index,array) {
+				createItem(item,index);
+		    })
+		}
+
+	};
+
+	//创建节点
+	var createItem = function(value,index) {
+
+		var li = document.createElement('li');
+		li.innerText = value;
+		li.className += "queuebox";
+		li.style.height = value + "px";
+		li.style.top = "-"+value+"px";
+		li.style.left = index*60 + "px";
+		var ul = document.getElementById('render');
+		ul.appendChild(li);
+		
+	};
+
+
+
+
+
+	//策略模式
+	var strategies = {
+		"shift":function  (value) {
+				arr.shift(value);
+				render();
+		},
+		"push":function  (value) {
+				arr.push(value);
+				render();
+		},
+		"unshift":function  (value) {
+				arr.unshift(value);
+				render();
+		},
+		"pop":function  (value) {
+				arr.pop(value);
+				render();
+		},
+		"sort":function() {
+				arr = arr.sort(function  (x,y) {
+					if (x<y) {
+						return -1;		
+					} else if(x>y){
+						return 1;
+					}else{
+						return 0;
+					}
+				});
+				render();
+		}
+	};
+
+	//调用策略并做出一些输入限制
+	var handleItem = function  (model) {
+		var value = document.getElementById('dataInput').value;
+		 
+		console.log(typeof value);
+
+		if (value === "") {
+			return;
+		} 
+	    else if(Number(value)<10||Number(value)>100){
+			alert("请输入10-100区间的数字");
+		}
+		else {
+			strategies[model](value);
+		}
+		
+	}
+
+
+
+
+	//绑定事件
+	var bindClickEvent = function(id,model) {
+			document.getElementById(id).addEventListener('click', function (e) {
+			handleItem(model);
+		}, false);
+	};
+
+	bindClickEvent('l_in','shift');
+	bindClickEvent('r_in','push');
+	bindClickEvent('l_out','unshift');
+	bindClickEvent('r_out','pop');
+	bindClickEvent('sort','sort');
+	
+	render();
+
+	})()
+	
+
+</script>
+</html>
