@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>task6</title>
+	<style>
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		button.btn{
+			width: 60px;
+			height: 30px;
+			text-align: center;
+			line-height: 15px;
+ 		}
+ 		ul#render{
+ 			margin-top: 20px;
+ 			margin-left: 20px;
+ 		}
+ 		ul#render .queuebox{
+ 			list-style: none;
+ 			float: left;
+ 			display: inline-block;
+ 			width: 50px;
+ 			height: 50px;
+ 			background-color: #e2d3c5;
+ 			margin-right: 10px;
+ 			text-align: center;
+ 			line-height: 50px;
+ 		}
+	</style>
+</head>
+<body>
+	
+	<textarea name="dataInput" id="dataInput" cols="30" rows="10"></textarea>
+
+	<button class="btn l_in" id="l_in">左侧出</button>
+	<button class="btn r_in" id="r_in">右侧入</button>
+	<button class="btn l_out" id="l_out">左侧入</button>
+	<button class="btn r_out" id="r_out">右侧出</button>
+	<button class="btn" id="execbtn">查询</button>
+
+	<input type="text" id="execInput">
+
+	<ul id="render">
+		
+	</ul>
+
+
+</body>
+<script>
+	(function() {
+
+	var arr = [3,0,23,32,2];
+
+	var render = function() {
+		var ul = document.getElementById('render');
+		ul.innerHTML = '';
+		arr.forEach(function (item,index,array) {
+				createItem(item);
+		})
+	};
+
+	var createItem = function(value) {
+		var li = document.createElement('li');
+		li.innerText = value;
+		li.className += "queuebox";
+		var ul = document.getElementById('render');
+		ul.appendChild(li);
+	};
+
+	//策略模式
+	var strategies = {
+		"shift":function  (value) {
+				arr.shift(value);
+				render();
+		},
+		"push":function  (value) {
+				arr.push(value);
+				render();
+		},
+		"unshift":function  (value) {
+				arr.unshift(value);
+				render();
+		},
+		"pop":function  (value) {
+				arr.pop(value);
+				render();
+		},
+		"exec":function  () {
+				var execvalue = document.getElementById('execInput').value;
+				var reg = new RegExp(execvalue);
+				arr.forEach(function(item,index,array){
+						if (reg.test(item)) {
+							var renderList = document.getElementById("render");
+							renderList.children[index].style.backgroundColor = "red";
+				
+						};
+				});
+		}
+	};
+
+	var handleItem = function  (model) {
+
+		var value = document.getElementById('dataInput').value;
+		console.log(typeof value);
+		if (value === "") {
+			return;
+		} else {
+			var newstr = value.replace(/\s|(,)|(，)/g," ");
+			var newArr = newstr.split(" ");
+			console.log(newArr);
+			newArr.forEach(function (item,index,array) {
+			 	strategies[model](item);
+			})
+		}
+		
+	}
+
+
+	
+	//绑定事件
+	var bindClickEvent = function(id,model) {
+			document.getElementById(id).addEventListener('click', function (e) {
+			handleItem(model);
+		}, false);
+	};
+
+	bindClickEvent('l_in','shift');
+	bindClickEvent('r_in','push');
+	bindClickEvent('l_out','unshift');
+	bindClickEvent('r_out','pop');
+	bindClickEvent('execbtn','exec');
+
+	render();
+
+	})()
+	
+
+</script>
+</html>
