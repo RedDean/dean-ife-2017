@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>task7</title>
+</head>
+<style>
+	html,body{
+		margin: 0;
+		padding: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	div.wrap{
+		position: absolute;
+		top: 0;
+		z-index: 100;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0,0,0,.32);
+		display: none;
+	}
+	div.fadeinbox{
+		width: 400px;
+		height: 300px;
+		background-color: #fff;
+		position: absolute;
+		z-index: 1000;
+		top: 50%;
+		left: 50%;
+		-webkit-transform: translate(-50%,-50%);
+		-ms-transform: translate(-50%,-50%);
+		-o-transform: translate(-50%,-50%);
+		transform: translate(-50%,-50%);
+	}
+</style>
+<body>
+
+	<button id="login">登陆</button>
+
+	<!-- <div class="wrap">
+		<div class="fadeinbox">
+			我是浮出层
+			<button id="ctrl">确定</button>
+		</div>
+	</div> -->
+	
+</body>
+<script>
+	(function () {
+
+		//浮层类组件
+		var LoginLayer =function  (obj) {
+
+			this.result ;//初始化单例
+			this.targetId = obj.targetId;//需要绑定的元素
+			this.targetEvent = obj.targetEvent;//需要绑定的事件
+			this.width = obj.width||400; //默认浮出框宽度400
+			this.height = obj.height||300;
+
+		};
+
+		LoginLayer.prototype.getSingle = function (fn) {
+			
+			console.log('single');
+			return function(){
+				if (!this.result) {
+					this.result = fn.apply(this, [arguments]);
+					console.log('create here');
+				};
+				return this.result;
+			}
+		};
+
+		LoginLayer.prototype.createLoginLayer = function() {
+
+			var wrapdiv = document.createElement('div');
+			var layerbox = document.createElement("div");
+			wrapdiv.className += "wrap";
+			layerbox.className += "fadeinbox";
+			document.getElementsByTagName('body')[0].appendChild(wrapdiv);
+			document.getElementsByTagName('body')[0].appendChild(layerbox);
+
+			//当浮层出现时禁止滚动
+			window.onscroll = null;
+
+			//点击遮罩层部分，关闭浮层页
+			wrapdiv.addEventListener('click', function (e) {
+				this.style.display = "none";
+				
+			}, false);
+			
+			return {
+				layerbox:layerbox,
+				wrapbox:wrapdiv
+			};
+		};
+
+		LoginLayer.prototype.createSingleLoginLayer = function () {
+			
+			return LoginLayer.prototype.getSingle(LoginLayer.prototype.createLoginLayer)();
+		}
+
+		//初始化一个浮出框
+		LoginLayer.prototype.init = function () {
+			
+			var loginLayer = LoginLayer.prototype.createSingleLoginLayer();
+			
+			document.getElementById(this.targetId).addEventListener('click', function (e) {
+
+			loginLayer.wrapbox.style.display=' block';
+			
+			}, false);
+		}
+		//改变浮出框大小
+		LoginLayer.prototype.changeLayerSize = function () {
+			var Layer = LoginLayer.prototype.createSingleLoginLayer().layerbox;
+			Layer.style.width = this.width + "px";
+			Layer.style.height = this.height + "px";
+
+		}
+		LoginLayer.prototype.openLayer = function () {
+			// body...
+			var Layer = this.createSingleLoginLayer().wrapbox;
+			Layer.style.display = 'block';
+		}
+
+		var layer = new LoginLayer({
+			'targetId':'login',
+			'targetEvent':'click',
+			'width':500,
+			'height':100
+		})
+
+		layer.init();
+		layer.changeLayerSize();
+		layer.openLayer();
+
+
+	})(); 
+</script>
+</html>
